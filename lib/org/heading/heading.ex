@@ -2,12 +2,16 @@ defmodule Org.Heading do
   defstruct value: "", content: []
   alias Org.Heading
 
-  def add_line(heading = %{content: content}, line) do
+  def add_line_to_content(heading = %{content: content}, line) do
     %Heading{heading | content: [line | content]}
   end
 
   def to_string(%{value: value, content: content}) do
     "\n#{value}#{concat_content(Enum.reverse(content))}"
+  end
+
+  def to_string(text) do
+    "\n* #{text}"
   end
 
   def concat_content(content) do

@@ -1,4 +1,4 @@
-defmodule Org.HeadingsParser do
+defmodule Org.Heading.Parser do
   @toplevelheading ~r/^\* .*$/
   alias Org.Heading
   alias Org.FileState
@@ -80,10 +80,10 @@ defmodule Org.HeadingsParser do
         line_type: :subheading,
         value: line
       }) do
-    %{file_state | current_heading: Heading.add_line(current_heading, line)}
+    %{file_state | current_heading: Heading.add_line_to_content(current_heading, line)}
   end
 
   def add_subheading([current_heading: current, headings: headings], line) do
-    [current_heading: Heading.add_line(current, line), headings: headings]
+    [current_heading: Heading.add_line_to_content(current, line), headings: headings]
   end
 end
