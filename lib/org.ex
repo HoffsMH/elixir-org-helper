@@ -22,10 +22,7 @@ defmodule Org do
   def defaults, do: @defaults
 
   def default_tasks do
-    ProjectListGroomer.groom(
-      Map.get(@defaults, :project_list_file),
-      Map.get(@defaults, :project_support_dir)
-    )
+    ProjectListGroomer.groom()
   end
 
   def file([operation | args]) do
