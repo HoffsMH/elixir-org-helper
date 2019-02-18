@@ -25,8 +25,8 @@ defmodule Org.ProjectListGroomerTest do
     with contents_map <- gen_contents_map(),
          result <- project_list_as_headings(contents_map),
          expected <- [
-           %Org.Heading{value: "a"},
-           %Org.Heading{value: "b"}
+           %Org.OrgFile.Heading{value: "a"},
+           %Org.OrgFile.Heading{value: "b"}
          ] do
       assert(
         Enum.sort(result) === Enum.sort(expected),
