@@ -1,4 +1,4 @@
-defmodule Org.Heading.Sorter do
+defmodule Org.OrgFile.HeadingSorter do
   alias Org.Heading.Merger
 
   defstruct merged: [],
