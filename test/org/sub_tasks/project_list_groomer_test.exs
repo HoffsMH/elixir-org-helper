@@ -60,8 +60,6 @@ defmodule Org.ProjectListGroomerTest do
   end
 
   test "run/1" do
-    import ProjectListGroomer
-
     with io_map <- @io_map,
          result <- ProjectListGroomer.run(io_map),
          expected <- """
