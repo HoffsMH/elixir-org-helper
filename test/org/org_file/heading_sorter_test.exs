@@ -4,14 +4,6 @@ defmodule Org.OrgFile.HeadingSorterTest do
   alias Org.OrgFile.HeadingSorter
   alias Org.OrgFile.Heading
 
-  @heading_one [
-    %Heading{value: "Hello"}
-  ]
-
-  @heading_two [
-    %Heading{value: "goodbye"}
-  ]
-
   test "sort/2 2 simple list no crossover" do
     with list_one <- [%Heading{value: "hello"}],
          list_two <- [%Heading{value: "goodbye"}],

@@ -1,6 +1,5 @@
 defmodule Org.FileTest do
   use ExUnit.Case
-  alias Org.File
   alias FS.IOMap
 
   test "prepend/2 with a single file" do

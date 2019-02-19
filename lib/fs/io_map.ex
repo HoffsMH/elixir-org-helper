@@ -27,13 +27,13 @@ defmodule FS.IOMap do
       if File.regular?(full_name) do
         %{
           type: :file,
-          name: value,
+          name: full_name,
           content: File.read!(full_name)
         }
       else
         %{
           type: :dir,
-          name: value,
+          name: full_name,
           content: File.ls!(full_name)
         }
       end
