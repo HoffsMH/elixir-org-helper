@@ -1,57 +1,55 @@
 defmodule Org.ProjectListGroomer do
-  # def run(contents_map, sorted_headings) when is_map(sorted) do
-  #   matched_header = "* ---Matched---"
+  alias Org.OrgFile.Parser
+  alias Org.OrgFile.HeadingSorter
+  alias Org.OrgFile.Heading
 
-  #   matched_output =
-  #     Map.get(sorted, :merged)
-  #     |> Enum.reduce(matched_header, &(&2 <> Writer.write(&1)))
+  def run(io_map) do
+    with sorted_headings <-
+           HeadingSorter.sort(
+             project_list_as_headings(io_map),
+             project_list_file_headings(io_map)
+           ) do
+      run(io_map, sorted_headings)
+    end
+  end
 
-  #   new_header = "\n* ---New---"
+  def get_project_list_file_content(io_map) do
+    get_in(Map.from_struct(io_map), [:files, :project_list_file, :content])
+  end
 
-  #   new_output =
-  #     Map.get(sorted, :list_one_only)
-  #     |> Enum.reduce(new_header, &(&2 <> Writer.write(&1)))
+  def project_list_file_headings(io_map) do
+    io_map
+    |> get_project_list_file_content()
+    |> Parser.parse()
+  end
 
-  #   orphaned_header = "\n* ---Orphaned---"
+  def run(io_map, sorted_headings) when is_map(sorted_headings) do
+    matched_header = "* ---Matched---"
 
-  #   orphaned_output =
-  #     Map.get(sorted, :list_two_only)
-  #     |> Enum.reduce(orphaned_header, &(&2 <> Writer.write(&1)))
+    matched_output =
+      Map.get(sorted_headings, :merged)
+      |> Enum.reduce(matched_header, &(&2 <> Heading.to_string(&1)))
 
-  #   complete_output = matched_output <> new_output <> orphaned_output
+    new_header = "\n* ---New---"
 
-  #   new_content_map =
-  #     Map.get(contents_map, :project_list_file)
-  #     |> Map.put(:content, complete_output)
+    new_output =
+      Map.get(sorted_headings, :list_one_only)
+      |> Enum.reduce(new_header, &(&2 <> Heading.to_string(&1)))
 
-  #   Map.put(contents_map, :project_list_file, new_content_map)
-  # end
+    orphaned_header = "\n* ---Orphaned---"
 
-  # def run(sorted, project_list_filename) when is_map(sorted) do
-  #   File.write(Path.expand(project_list_filename), run(sorted))
-  # end
+    orphaned_output =
+      Map.get(sorted_headings, :list_two_only)
+      |> Enum.reduce(orphaned_header, &(&2 <> Heading.to_string(&1)))
 
-  # def run(project_list_filename, projects_directory_name, :test)
-  #     when is_binary(project_list_filename) and is_binary(projects_directory_name) do
-  #   with active_projects_list <- project_list_as_headings(projects_directory_name),
-  #        current_project_list_headings <- Parser.parse(project_list_filename) do
-  #     run(Sorter.sort(active_projects_list, current_project_list_headings), :test)
-  #   end
-  # end
+    complete_output = matched_output <> new_output <> orphaned_output
 
-  # def run(project_list_filename, projects_directory_name)
-  #     when is_binary(project_list_filename) and is_binary(projects_directory_name) do
-  #   with active_projects_list <- project_list_as_headings(projects_directory_name),
-  #        current_project_list_headings <- Parser.parse(project_list_filename) do
-  #     run(
-  #       Sorter.sort(active_projects_list, current_project_list_headings),
-  #       project_list_filename
-  #     )
-  #   end
-  # end
+    FS.IOMap.update_file_content(io_map, :project_list_file, complete_output)
+  end
 
-  def project_list_as_headings(contents_map) do
-    contents_map
+  def project_list_as_headings(io_map) do
+    io_map
+    |> Map.get(:files)
     |> Map.get(:project_support_dir)
     |> Map.get(:content)
     |> Enum.reject(&(&1 === ".stfolder"))

@@ -45,6 +45,28 @@ defmodule FS.IOMap do
     end
   end
 
+  def update_file_content(io_map, entry_label, entry_content) do
+    with old_entry <- get_file_entry(io_map, entry_label),
+         new_entry <- %{
+           old_entry
+           | content: entry_content
+         } do
+      update_file_entry(io_map, entry_label, new_entry)
+    end
+  end
+
+  def get_file_entry(io_map, entry_label) do
+    get_in(Map.from_struct(io_map), [:files, entry_label])
+  end
+
+  def get_action_list(io_map, action_label) do
+    get_in(Map.from_struct(io_map), [:actions, action_label])
+  end
+
+  def get_file_content(io_map, entry_label) do
+    Map.get(get_file_entry(io_map, entry_label), :content)
+  end
+
   def add_to_actions(io_map, action_type, action) do
     with action_map <- Map.get(io_map, :actions),
          action_type_list <- Map.get(action_map, action_type),

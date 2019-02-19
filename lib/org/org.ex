@@ -11,16 +11,16 @@ defmodule Org do
   strings for appending to file names
   """
 
-  def default_tasks(contents_map) do
-    contents_map
+  def default_tasks(io_map) do
+    io_map
     |> Org.ProjectListGroomer.run()
   end
 
-  def run([first_arg | args], io) do
-    with new_io <- default_tasks(io) do
+  def run(io_map, [first_arg | args]) do
+    with new_io_map <- default_tasks(io_map) do
       case first_arg do
-        "cap" -> Org.Cap.run(io, args)
-        "file" -> Org.File.run(io, args)
+        "cap" -> Org.Cap.run(io_map, args)
+        "file" -> Org.File.run(io_map, args)
       end
     end
   end
