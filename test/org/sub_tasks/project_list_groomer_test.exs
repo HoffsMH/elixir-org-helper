@@ -42,12 +42,6 @@ defmodule Org.ProjectListGroomerTest do
     }
   }
 
-  @default_file_args %{
-    project_list_file: "#{@default_root_dir}/01-schedule/project-list.org",
-    project_support_dir: "#{@default_root_dir}/02-project-support",
-    capture_file: "#{@default_root_dir}/00-capture/capture.org"
-  }
-
   test "get_active_projects_list_as_headings/1" do
     import ProjectListGroomer
 
