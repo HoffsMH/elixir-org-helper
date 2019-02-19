@@ -45,23 +45,7 @@ defmodule FS do
 
   """
 
-  def update_contents_map(io, content_map_label, new_content_map) do
-    with contents_map <- Map.get(io, :contents_map),
-         new_contents_map <- Map.put(contents_map, content_map_label, new_content_map) do
-      Map.put(io, :contents_map, new_contents_map)
-    end
-  end
-
-  def add_to_actions(io, action_type, action) do
-    with action_map <- Map.get(io, :action_map),
-         action_type_list <- Map.get(action_map, action_type),
-         new_action_type_list <- [action | action_type_list],
-         new_action_map <- Map.put(action_map, action_type, new_action_type_list) do
-      Map.put(io, :action_map, new_action_map)
-    end
-  end
-
-  def add_to_write_actions(io, action) do
-    add_to_actions(io, :write, action)
+  def apply_io(io_map) do
+    IO.inspect(io_map)
   end
 end
