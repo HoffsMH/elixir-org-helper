@@ -1,5 +1,6 @@
 defmodule Org.OrgFile.HeadingSorter do
-  alias Org.Heading.Merger
+  alias Org.OrgFile.Heading.Matcher
+  alias Org.OrgFile.Heading.Merger
 
   defstruct merged: [],
             list_one_only: [],
