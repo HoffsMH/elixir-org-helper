@@ -23,18 +23,20 @@ defmodule FS.IOMap do
   end
 
   def gen_file_entry(value) do
-    if File.regular?(value) do
-      %{
-        type: :file,
-        name: value,
-        content: File.read!(value)
-      }
-    else
-      %{
-        type: :dir,
-        name: value,
-        content: File.ls!(value)
-      }
+    with full_name <- Path.expand(value) do
+      if File.regular?(full_name) do
+        %{
+          type: :file,
+          name: value,
+          content: File.read!(full_name)
+        }
+      else
+        %{
+          type: :dir,
+          name: value,
+          content: File.ls!(full_name)
+        }
+      end
     end
   end
 

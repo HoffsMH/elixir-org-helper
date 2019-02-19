@@ -45,6 +45,7 @@ defmodule Org.ProjectListGroomer do
     complete_output = matched_output <> new_output <> orphaned_output
 
     FS.IOMap.update_file_content(io_map, :project_list_file, complete_output)
+    |> FS.IOMap.add_to_actions(:write, :project_list_file)
   end
 
   def project_list_as_headings(io_map) do

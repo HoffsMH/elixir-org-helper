@@ -16,11 +16,15 @@ defmodule Org do
     |> Org.ProjectListGroomer.run()
   end
 
+  def run(io_map, []) do
+    default_tasks(io_map)
+  end
+
   def run(io_map, [first_arg | args]) do
     with new_io_map <- default_tasks(io_map) do
       case first_arg do
-        "cap" -> Org.Cap.run(io_map, args)
-        "file" -> Org.File.run(io_map, args)
+        "cap" -> Org.Cap.run(new_io_map, args)
+        "file" -> Org.File.run(new_io_map, args)
       end
     end
   end

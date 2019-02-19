@@ -7,7 +7,7 @@ defmodule Org.OrgFile.HeadingSorter do
             list_two_only: []
 
   def sort(heading_list_one, heading_list_two) do
-    sort(heading_list_one, heading_list_two, %Org.Heading.Sorter{})
+    sort(heading_list_one, heading_list_two, %Org.OrgFile.HeadingSorter{})
   end
 
   def sort([], [], sorted_headings), do: sorted_headings

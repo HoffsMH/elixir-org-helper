@@ -19,8 +19,6 @@ defmodule Org.CLI do
          io_map <- FS.IOMap.gen_new(file_args),
          new_io_map <- Org.run(io_map, args) do
       IO.inspect(new_io_map)
-
-      # FS.apply_contents_map(new_contents_map)
     end
   end
 
