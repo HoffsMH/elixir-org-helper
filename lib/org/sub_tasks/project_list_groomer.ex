@@ -21,6 +21,9 @@ defmodule Org.ProjectListGroomer do
     io_map
     |> get_project_list_file_content()
     |> Parser.parse()
+    |> Enum.reject(&(Map.get(&1, :value) === "* ---Matched---"))
+    |> Enum.reject(&(Map.get(&1, :value) === "* ---New---"))
+    |> Enum.reject(&(Map.get(&1, :value) === "* ---Orphaned---"))
   end
 
   def run(io_map, sorted_headings) when is_map(sorted_headings) do
