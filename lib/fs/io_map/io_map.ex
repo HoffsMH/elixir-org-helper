@@ -1,12 +1,7 @@
 defmodule FS.IOMap do
-  @empty_actions %{
-    create: [],
-    delete: [],
-    rename: [],
-    write: []
-  }
+  alias FS.IOMap.{Actions}
 
-  defstruct actions: @empty_actions,
+  defstruct actions: %Actions{},
             files: %{}
 
   def gen_new(args) do
@@ -41,24 +36,19 @@ defmodule FS.IOMap do
   end
 
   def update_file_entry(io_map, entry_label, entry_value) do
-    with files_map <- Map.get(io_map, :files),
-         new_files_map <- Map.put(files_map, entry_label, entry_value) do
-      Map.put(io_map, :files, new_files_map)
+    with new_files_map <- put_in(io_map.files, [entry_label], entry_value) do
+      put_in(io_map.files, new_files_map)
     end
   end
 
   def update_file_content(io_map, entry_label, entry_content) do
-    with old_entry <- get_file_entry(io_map, entry_label),
-         new_entry <- %{
-           old_entry
-           | content: entry_content
-         } do
-      update_file_entry(io_map, entry_label, new_entry)
+    with new_file_map <- put_in(io_map.files, [entry_label, :content], entry_content) do
+      put_in(io_map.files, new_file_map)
     end
   end
 
   def get_file_entry(io_map, entry_label) do
-    get_in(Map.from_struct(io_map), [:files, entry_label])
+    get_in(io_map.files, [entry_label])
   end
 
   def get_action_list(io_map, action_label) do

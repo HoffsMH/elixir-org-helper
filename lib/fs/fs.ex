@@ -50,22 +50,17 @@ defmodule FS do
   end
 
   def apply_writes(io_map) do
-    io_map
-    |> Map.get(:actions)
-    |> Map.get(:write)
+    get_in(io_map.actions, :write)
     |> Enum.each(&apply_write(&1, io_map))
   end
 
   def apply_write(file_label, io_map) do
-    io_map
-    |> Map.get(:files)
-    |> Map.get(file_label)
+    get_in(io_map.files, file_label)
     |> write()
   end
 
   def write(file_entry) do
-    file_entry
-    |> Map.get(:name)
+    Map.get(file_entry, :name)
     |> File.write!(Map.get(file_entry, :content))
   end
 end
