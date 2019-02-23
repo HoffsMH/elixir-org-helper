@@ -3,6 +3,10 @@ defmodule Org.ProjectListGroomer do
   alias Org.OrgFile.HeadingSorter
   alias Org.OrgFile.Heading
 
+  @matched_divider "* ---Matched---"
+  @new_divider "* ---New---"
+  @orphaned_divider "* ---Orphaned---"
+
   def run(io_map) do
     with sorted_headings <-
            HeadingSorter.sort(
@@ -13,42 +17,40 @@ defmodule Org.ProjectListGroomer do
     end
   end
 
-  def get_project_list_file_content(io_map) do
-    get_in(Map.from_struct(io_map), [:files, :project_list_file, :content])
-  end
-
   def project_list_file_headings(io_map) do
     io_map
-    |> get_project_list_file_content()
+    |> FS.get_file(:project_list_file)
     |> Parser.parse()
-    |> Enum.reject(&(Map.get(&1, :value) === "* ---Matched---"))
-    |> Enum.reject(&(Map.get(&1, :value) === "* ---New---"))
-    |> Enum.reject(&(Map.get(&1, :value) === "* ---Orphaned---"))
+    |> filter_dividers()
+  end
+
+  def filter_dividers(headings) do
+    import Heading
+
+    headings
+    |> Enum.reject(&(value(&1) === @matched_divider))
+    |> Enum.reject(&(value(&1) === @new_divider))
+    |> Enum.reject(&(value(&1) === @orphaned_divider))
   end
 
   def run(io_map, sorted_headings) when is_map(sorted_headings) do
-    matched_header = "* ---Matched---"
+    import Heading
 
     matched_output =
       Map.get(sorted_headings, :merged)
-      |> Enum.reduce(matched_header, &(&2 <> Heading.to_string(&1)))
-
-    new_header = "\n* ---New---"
+      |> Enum.reduce(@matched_divider, &(&2 <> Heading.to_string(&1)))
 
     new_output =
       Map.get(sorted_headings, :list_one_only)
-      |> Enum.reduce(new_header, &(&2 <> Heading.to_string(&1)))
-
-    orphaned_header = "\n* ---Orphaned---"
+      |> Enum.reduce(ensure_formatting(@new_divider), &(&2 <> Heading.to_string(&1)))
 
     orphaned_output =
       Map.get(sorted_headings, :list_two_only)
-      |> Enum.reduce(orphaned_header, &(&2 <> Heading.to_string(&1)))
+      |> Enum.reduce(ensure_formatting(@orphaned_divider), &(&2 <> Heading.to_string(&1)))
 
     complete_output = matched_output <> new_output <> orphaned_output
 
-    FS.IOMap.update_file_content(io_map, :project_list_file, complete_output)
-    |> FS.IOMap.add_to_actions(:write, :project_list_file)
+    FS.update_file(io_map, :project_list_file, complete_output)
   end
 
   def project_list_as_headings(io_map) do

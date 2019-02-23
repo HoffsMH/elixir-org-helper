@@ -1,51 +1,75 @@
 defmodule FS do
   @doc """
-  will take a map(entity_map) of
-  entity labels as keys
-  and entity names as values
-
-  an entity is either a file name a link name or a directory name
-
-  it will return a map of labels and either file contents
-  or directory listing
-
-
-  labels are generic
-  like "project_list"
-
-  we need some way of identifying the final file?
-  input
-  entity_map
-  %{
-    entity_key entity_value
-    project_list: "~/personal/01-schedule/project-list.org"
-  }
-
-
-  output
-  contents_map that is generated
-  %{
-    content_entry in content_map
-    content_key
-    content_map
-    project_dir %{
-    type: "dir"
-    name: "~/personal/01-schedule/project-list.org",
-    content: "adfasdfaasdfasdfafasd\nasdfassfassdfa\nasdfasdfanssdf\n"
-    }
-  }
-
-  two different activities/domains
-  creating and updating io maps
-  (updating data structure)
-
-  applying io maps to the file system
-  (using data-structure to take action on)
 
 
   """
 
-  def apply_io(io_map) do
+  def file_info(relative_path) do
+    with full_name <- Path.expand(relative_path) do
+      {
+        full_name,
+        Path.dirname(full_name),
+        Path.basename(full_name)
+      }
+    end
+  end
+
+  def get_file(io_map, label) do
+    get_in(io_map.files, [label, :content])
+  end
+
+  def append_to_file(io_map, label, content) do
+    with new_file_map <-
+           update_in(
+             io_map.files,
+             [label, :content],
+             &(&1 <> content)
+           ) do
+      put_in(io_map.files, new_file_map)
+      |> add_to_write_actions(label)
+    end
+  end
+
+  def add_to_write_actions(io_map, action) do
+    update_in(io_map.actions.write, &Enum.uniq([action | &1]))
+  end
+
+  def add_to_rename_actions(io_map, action) do
+    update_in(io_map.actions.rename, &Enum.uniq([action | &1]))
+  end
+
+  def update_file(io_map, label, content) do
+    with new_file_map <- put_in(io_map.files, [label, :content], content) do
+      put_in(io_map.files, new_file_map)
+      |> add_to_write_actions(label)
+    end
+  end
+
+  def add_file(io_map, {key, value}) do
+    with new_files_map <- put_in(io_map.files, [key], gen_file(value)) do
+      put_in(io_map.files, new_files_map)
+    end
+  end
+
+  def gen_file(value) do
+    with full_name <- Path.expand(value) do
+      if File.regular?(full_name) do
+        %{
+          type: :file,
+          name: full_name,
+          content: File.read!(full_name)
+        }
+      else
+        %{
+          type: :dir,
+          name: full_name,
+          content: File.ls!(full_name)
+        }
+      end
+    end
+  end
+
+  def apply_io!(io_map) do
     apply_writes(io_map)
   end
 

@@ -114,7 +114,10 @@ defmodule Org.ProjectListGroomerTest do
          some sub content 3
          taco
          """ do
-      assert IOMap.get_file_content(result, :project_list_file) === expected
+      assert(
+        FS.get_file(result, :project_list_file) === expected,
+        "it is sorted"
+      )
     end
   end
 
@@ -141,7 +144,7 @@ defmodule Org.ProjectListGroomerTest do
          taco
          """ do
       assert(
-        IOMap.get_file_content(result, :project_list_file) === expected,
+        FS.get_file(result, :project_list_file) === expected,
         "dividers are not copied and the new project is now in matched"
       )
     end

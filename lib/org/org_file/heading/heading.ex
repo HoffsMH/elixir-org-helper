@@ -35,4 +35,8 @@ defmodule Org.OrgFile.Heading do
   def concat_content([line | lines], output) do
     concat_content(lines, output <> "\n#{line}")
   end
+
+  def value(%{value: value}) do
+    value
+  end
 end

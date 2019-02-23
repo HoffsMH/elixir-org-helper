@@ -2,11 +2,11 @@ defmodule Org.File do
   @moduledoc """
   This deals with shuffling around files
   """
-  alias FS.IOMap
 
   def run(io_map, [action | args]) do
     case action do
       "prepend" -> prepend(io_map, args)
+      "trim" -> trim(io_map, args)
     end
   end
 
@@ -16,12 +16,9 @@ defmodule Org.File do
   def prepend(io_map, _, []), do: io_map
 
   def prepend(io_map, text, [relative_path | rest]) do
-    with path <- File.cwd!(),
-         dirname <- Path.dirname(relative_path),
-         basename <- Path.basename(relative_path),
-         source <- Path.expand(relative_path, path),
-         destination <- Path.expand("#{dirname}/#{text}#{basename}", path),
-         new_io_map <- IOMap.add_to_actions(io_map, :rename, {source, destination}) do
+    with {source, dirname, basename} <- FS.file_info(relative_path),
+         destination <- "#{dirname}/#{text}#{basename}",
+         new_io_map <- FS.add_to_rename_actions(io_map, {source, destination}) do
       prepend(new_io_map, text, rest)
     end
   end
@@ -32,12 +29,9 @@ defmodule Org.File do
   def trim(io_map, _, []), do: io_map
 
   def trim(io_map, text, [relative_path | rest]) do
-    with path <- File.cwd!(),
-         dirname <- Path.dirname(relative_path),
-         basename <- Path.basename(relative_path),
-         source <- Path.expand(relative_path, path),
-         destination <- Path.expand("#{dirname}/#{String.trim(basename, text)}", path),
-         new_io_map <- IOMap.add_to_actions(io_map, :rename, {source, destination}) do
+    with {source, dirname, basename} <- FS.file_info(relative_path),
+         destination <- "#{dirname}/#{String.trim(basename, text)}",
+         new_io_map <- FS.add_to_rename_actions(io_map, {source, destination}) do
       trim(new_io_map, text, rest)
     end
   end
