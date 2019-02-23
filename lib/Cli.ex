@@ -18,7 +18,7 @@ defmodule Org.CLI do
     with file_args <- gen_file_args(args),
          io_map <- FS.IOMap.gen_new(file_args),
          new_io_map <- Org.run(io_map, args) do
-      FS.apply_io(new_io_map)
+      FS.apply_io!(new_io_map)
     end
   end
 
