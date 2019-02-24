@@ -1,7 +1,7 @@
 defmodule Org.OrgFile.Parser do
   alias Org.OrgFile.Heading
 
-  @toplevelheading ~r/^\* .*$/
+  @toplevelheading ~r{^\* .*$}
 
   def parse(content) when is_binary(content) do
     parse(String.split(content, "\n"))

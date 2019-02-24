@@ -1,6 +1,7 @@
 defmodule FS_test do
   use ExUnit.Case
 
+  @subject FS
   @expected_file_contents """
   * project b
   some sub content 1
@@ -61,23 +62,20 @@ defmodule FS_test do
   end
 
   test "add_files/2 with normal file and normal directory" do
-    with result <- FS.add_files(%FS.IOMap{}, @default_file_opts),
-         expected <- %FS.IOMap{
-           actions: %FS.IOMap.Actions{create: [], delete: [], rename: [], write: []},
-           files: %{
-             file_key_one: %{
-               content: @expected_file_contents,
-               name: "/normal_org_file.org",
-               type: :file
-             },
-             file_key_two: %{
-               content: @expected_dir_contents,
-               name: "/normal_dir",
-               type: :dir
-             }
-           }
-         } do
-      assert result === expected
+    with result <- @subject.add_files(%FS.IOMap{}, @default_file_opts) do
+      assert(
+        %{ files: %{file_key_one: entry_one, file_key_two: entry_two }} = result,
+        "both file keys are present"
+      )
+
+      assert(
+        %{content: @expected_file_contents, type: :file, name: "/normal_org_file.org"} = entry_one,
+        "file entry one has the right content type and name"
+      )
+      assert(
+        %{content: @expected_dir_contents, type: :dir, name: "/normal_dir"} = entry_two,
+        "file entry two has the right content type and name"
+      )
     end
   end
 end
