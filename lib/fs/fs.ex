@@ -77,6 +77,16 @@ defmodule FS do
 
   def apply_io!(io_map) do
     apply_writes(io_map)
+    apply_renames(io_map)
+  end
+
+  def apply_renames(io_map) do
+    io_map.actions.rename
+    |> Enum.each(&apply_rename/1)
+  end
+
+  def apply_rename({source, destination}) do
+    @file_module.rename(source, destination)
   end
 
   defp apply_writes(io_map) do
@@ -91,6 +101,6 @@ defmodule FS do
 
   defp write(file_entry) do
     file_entry.name
-    |> File.write!(file_entry.content)
+    |> @file_module.write!(file_entry.content)
   end
 end

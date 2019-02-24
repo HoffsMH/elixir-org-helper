@@ -3,6 +3,7 @@ defmodule TestFile do
 
   def regular?("/normal_org_file.org"), do: true
   def regular?("/normal_dir"), do: false
+  def regular?(_), do: false
 
   def read!("/normal_org_file.org") do
     """
@@ -36,5 +37,7 @@ defmodule TestFile do
     ]
   end
 
-  def regular?(_), do: false
+
+  def rename(_,_), do: :noop
+  def write!(_,_), do: :noop
 end
