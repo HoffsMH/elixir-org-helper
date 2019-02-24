@@ -46,6 +46,11 @@ defmodule FS do
     end
   end
 
+  def add_files(io_map, file_opts) do
+    file_opts
+    |> Enum.reduce(io_map, &add_file(&2, &1))
+  end
+
   def add_file(io_map, {key, value}) do
     with new_files_map <- put_in(io_map.files, [key], gen_file(value)) do
       put_in(io_map.files, new_files_map)

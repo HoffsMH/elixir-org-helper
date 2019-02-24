@@ -25,6 +25,11 @@ defmodule FS_test do
     ".stfolder"
   ]
 
+  @default_file_opts %{
+    file_key_one: "/normal_org_file.org",
+    file_key_two: "/normal_dir"
+  }
+
   test "add_file/2 with a normal org file" do
     with result <- FS.add_file(%FS.IOMap{}, {:my_file_key, "/normal_org_file.org"}),
          expected <- %FS.IOMap{
