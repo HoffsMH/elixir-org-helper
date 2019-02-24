@@ -1,5 +1,5 @@
 defmodule FS.IOMap do
-  alias FS.IOMap.{Actions, Context}
+  alias FS.IOMap.Actions
 
   defstruct actions: %Actions{},
             files: %{}

@@ -39,7 +39,6 @@ defmodule Org.FileTest do
   test "trim/2 with multiple files" do
     with args <- ["pref", "/some/file/prefix-name.exs", "/some/file/prefix-name\ other"],
          resulting_io_map <- Org.File.trim(%IOMap{}, args),
-         renames <- resulting_io_map.actions.rename,
          [{source_two, destination_two}, {source_one, destination_one}] <-
            resulting_io_map.actions.rename do
       assert source_one === "/some/file/prefix-name.exs"

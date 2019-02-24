@@ -7,6 +7,7 @@ defmodule Org.MixProject do
       version: "0.1.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
       escript: escript()
     ]
@@ -21,13 +22,16 @@ defmodule Org.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
-    ]
+    []
   end
 
   defp escript do
     [main_module: Org.CLI]
   end
+
+  defp elixirc_paths(:test) do
+    ["lib", "test/support"]
+  end
+
+  defp elixirc_paths(_), do: ["lib"]
 end
