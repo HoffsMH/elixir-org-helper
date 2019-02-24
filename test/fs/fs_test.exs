@@ -59,4 +59,25 @@ defmodule FS_test do
       assert result === expected
     end
   end
+
+  test "add_files/2 with normal file and normal directory" do
+    with result <- FS.add_files(%FS.IOMap{}, @default_file_opts),
+         expected <- %FS.IOMap{
+           actions: %FS.IOMap.Actions{create: [], delete: [], rename: [], write: []},
+           files: %{
+             file_key_one: %{
+               content: @expected_file_contents,
+               name: "/normal_org_file.org",
+               type: :file
+             },
+             file_key_two: %{
+               content: @expected_dir_contents,
+               name: "/normal_dir",
+               type: :dir
+             }
+           }
+         } do
+      assert result === expected
+    end
+  end
 end
