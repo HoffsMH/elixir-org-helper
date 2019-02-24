@@ -3,6 +3,7 @@ defmodule FS do
 
 
   """
+  @file_module Application.get_env(:org, File)
 
   def file_info(relative_path) do
     with full_name <- Path.expand(relative_path) do
@@ -53,17 +54,17 @@ defmodule FS do
 
   def gen_file(value) do
     with full_name <- Path.expand(value) do
-      if File.regular?(full_name) do
+      if @file_module.regular?(full_name) do
         %{
           type: :file,
           name: full_name,
-          content: File.read!(full_name)
+          content: @file_module.read!(full_name)
         }
       else
         %{
           type: :dir,
           name: full_name,
-          content: File.ls!(full_name)
+          content: @file_module.ls!(full_name)
         }
       end
     end
@@ -73,18 +74,18 @@ defmodule FS do
     apply_writes(io_map)
   end
 
-  def apply_writes(io_map) do
-    get_in(io_map.actions, :write)
+  defp apply_writes(io_map) do
+    io_map.actions.write
     |> Enum.each(&apply_write(&1, io_map))
   end
 
-  def apply_write(file_label, io_map) do
-    get_in(io_map.files, file_label)
+  defp apply_write(file_label, io_map) do
+    io_map.files[file_label]
     |> write()
   end
 
-  def write(file_entry) do
-    Map.get(file_entry, :name)
-    |> File.write!(Map.get(file_entry, :content))
+  defp write(file_entry) do
+    file_entry.name
+    |> File.write!(file_entry.content)
   end
 end
