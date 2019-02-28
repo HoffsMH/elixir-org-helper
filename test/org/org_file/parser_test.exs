@@ -1,5 +1,7 @@
 defmodule Org.OrgFile.ParserTest do
   use ExUnit.Case
+  use ExUnitProperties
+
   alias Org.OrgFile.Parser
 
   @org_file_contents """
@@ -12,6 +14,19 @@ defmodule Org.OrgFile.ParserTest do
   *** what
   ** hi
   """
+
+  property """
+  always returns a list,
+  There cannot be more headings than there are lines in the file
+  """ do
+    check all lines <- list_of(string(:printable)),
+              file = Enum.join(lines, "\n"),
+              result = Parser.parse(file) do
+      assert is_list(result)
+      assert Enum.all?(result, &(&1.__struct__ == Org.OrgFile.Heading))
+      assert length(result) <= length(lines)
+    end
+  end
 
   test "parse/1" do
     with result <- Parser.parse(@org_file_contents) do
@@ -37,6 +52,13 @@ defmodule Org.OrgFile.ParserTest do
         heading_content === expected_contents,
         "contents are correct"
       )
+    end
+  end
+
+  test "parse/1 with an empty file" do
+    with result <- Parser.parse("") do
+      assert result === [],
+        "No Headings found"
     end
   end
 end

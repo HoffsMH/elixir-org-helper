@@ -37,7 +37,6 @@ defmodule TestFile do
     ]
   end
 
-
-  def rename(_,_), do: :noop
-  def write!(_,_), do: :noop
+  def rename(_, _), do: :noop
+  def write!(_, _), do: :noop
 end

@@ -64,14 +64,16 @@ defmodule FS_test do
   test "add_files/2 with normal file and normal directory" do
     with result <- @subject.add_files(%FS.IOMap{}, @default_file_opts) do
       assert(
-        %{ files: %{file_key_one: entry_one, file_key_two: entry_two }} = result,
+        %{files: %{file_key_one: entry_one, file_key_two: entry_two}} = result,
         "both file keys are present"
       )
 
       assert(
-        %{content: @expected_file_contents, type: :file, name: "/normal_org_file.org"} = entry_one,
+        %{content: @expected_file_contents, type: :file, name: "/normal_org_file.org"} =
+          entry_one,
         "file entry one has the right content type and name"
       )
+
       assert(
         %{content: @expected_dir_contents, type: :dir, name: "/normal_dir"} = entry_two,
         "file entry two has the right content type and name"

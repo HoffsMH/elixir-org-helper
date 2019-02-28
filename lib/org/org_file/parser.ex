@@ -3,6 +3,8 @@ defmodule Org.OrgFile.Parser do
 
   @toplevelheading ~r{^\* .*$}
 
+  def parse(""), do: []
+
   def parse(content) when is_binary(content) do
     parse(String.split(content, "\n"))
   end
