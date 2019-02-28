@@ -22,7 +22,9 @@ defmodule Org.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    []
+    [
+      {:stream_data, "~> 0.4.2", only: :test}
+    ]
   end
 
   defp escript do
